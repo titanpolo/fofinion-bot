@@ -7,6 +7,7 @@
 
 import asyncio
 from time import time
+from unicodedata import name
 from webbrowser import get
 import discord
 from discord.ext import commands
@@ -25,6 +26,10 @@ TOKEN = os.environ["token"]
 SERVER_ID = os.environ["server_id"]
 
 ADMIN_ROLE = os.environ["admin_role"]
+
+VOTEM_URL = os.environ["votem_url"]
+
+SEMANA_URL = os.environ["semana_url"]
 
 #bot construction (bot prefix)
 intents = discord.Intents.all()
@@ -106,12 +111,35 @@ def build_embed():
     embed.add_field(name="Qualquer dúvida,", value="Seja sincero, ninguém vai te julgar, todo mundo ta aqui pra aprender :p", inline=False)
     return embed
 
+def build_votem_embed():
+    embed=discord.Embed(title="Aviso, votem!", url=VOTEM_URL, description="Não se esqueçam de votar qual o melhor dia/horário para nos reunirmos, isso é de extrema importância para darmos o próximo passo. Vote clicando [aqui]("+VOTEM_URL+").", color=0x18b4c9)
+    return embed
+
+def build_semana_embed():
+    embed=discord.Embed(title="Dia da semana", url=SEMANA_URL, description="Para votar no melhor dia da semana para nos reunirmos, clique [aqui]("+SEMANA_URL+")", color=0x6779c1)
+    return embed
+
 @client.command(name="embed", help="Cria embed.")
 async def create_embed(ctx):
     global channels
     for channel in channels:
         await client.get_channel(int(channel)).send(embed=build_embed())
     await wait_delete(ctx.message,3)
+    
+@client.command(name="embed-votem", help="Cria embed 'votem'.")
+async def create_embed_votem(ctx):
+    global channels
+    for channel in channels:
+        await client.get_channel(int(channel)).send(embed=build_votem_embed())
+    await wait_delete(ctx.message,3)
+
+@client.command(name="embed-semana", help="Cria embed 'semana'")
+async def create_embed_semana(ctx):
+    global channels
+    for channel in channels:
+        await client.get_channel(int(channel)).send(embed=build_semana_embed())
+    await wait_delete(ctx.message,3)
+
 
 @client.command(name="clear", help="Clear x number of messages in the current channel")
 async def clear(ctx, amount=6):
